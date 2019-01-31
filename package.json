@@ -4,7 +4,7 @@
   "description": "Cloning Wetube with Vanilla and NodeJS",
   "main": "index.js",
   "scripts": {
-    "dev:server": "nodemon --exec babel-node src/init.js --delay 2 --ignore '.scss' --ignore 'static' "
+    "dev": "nodemon --exec babel-node src/init.js --delay 2 --ignore '.scss' --ignore 'static' "
   },
   "author": "SeongBong",
   "license": "ISC",
