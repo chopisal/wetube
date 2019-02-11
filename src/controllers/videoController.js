@@ -41,8 +41,8 @@ export const postUpload = async (req, res) => {
   const newVideo = await Video.create({
     fileUrl: location,
     title,
-    description
-    // creator: req.user.id
+    description,
+    creator: req.user.id
   });
   req.user.videos.push(newVideo.id);
   req.user.save();
@@ -50,14 +50,46 @@ export const postUpload = async (req, res) => {
 };
 
 // Video Detail
-export const videoDetail = (req, res) => {
-  res.render("videoDetail", { pageTitle: "videoDetail" });
+export const videoDetail = async (req, res) => {
+  const {
+    params: { id }
+  } = req;
+  try {
+    const video = await Video.findById(id).populate("creator");
+    res.render("videoDetail", { pageTitle: video.title, video });
+  } catch (error) {
+    res.redirect(routes.home);
+  }
 };
 
-export const getEditVideo = (req, res) => {
-  res.render("getEditVideo", { pageTitle: "getEditVideo" });
+export const getEditVideo = async (req, res) => {
+  const {
+    params: { id }
+  } = req;
+  try {
+    const video = await Video.findById(id);
+    if (String(video.creator) !== req.user.id) {
+      throw Error();
+    } else {
+      res.render("getEditVideo", { pageTitle: "getEditVideo" });
+    }
+  } catch (error) {
+    res.redirect(routes.home);
+  }
 };
 
-export const deleteVideo = (req, res) => {
-  res.render("deleteVideo", { pageTitle: "deleteVideo" });
+export const deleteVideo = async (req, res) => {
+  const {
+    params: { id }
+  } = req;
+  try {
+    const video = await Video.findById(id);
+    if (String(video.creator) !== req.user.id) {
+      throw Error();
+    } else {
+      await Video.findOneAndRemove({ _id: id });
+    }
+  } catch (error) {
+    console.log(error);
+  }
 };
